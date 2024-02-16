@@ -3,4 +3,4 @@ sys.path.append("/Users/PC/Desktop/anduril/eugor/entitytools")
 
 import entity
 import player
-import subjects
+import eugor.entitytools.topics as topics
