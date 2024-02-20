@@ -5,7 +5,7 @@
 """
 
 import sys
-sys.path.append("/Users/PC/Desktop/anduril/eugor")
+sys.path.append("/Users/PC/Desktop/anduril/tofy")
 
 
 import entitytools

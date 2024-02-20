@@ -1,9 +1,9 @@
-import eugor
+import tofy
 import pyglet
 
 
 #this sohuld also be merged into entity.py probably!
-class Enemy(eugor.entitytools.entity.Entity):
+class Enemy(tofy.entitytools.entity.Entity):
     def __init__(self, subject, *args, **kwargs):
         super().__init__(*args, **kwargs)
         subject.push_handlers(self)
