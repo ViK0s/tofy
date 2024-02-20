@@ -1,6 +1,5 @@
 import sys
-sys.path.append("/Users/PC/Desktop/anduril/tofy/entitytools")
+sys.path.append("/Users/PC/Desktop/tofy-main/tofy/entitytools")
 
 import entity
 import player
-import tofy.entitytools.topics as topics

@@ -2,7 +2,7 @@ import pyglet
 
 
 import sys
-sys.path.append("/Users/PC/Desktop/anduril/")
+sys.path.append("/Users/PC/Desktop/tofy-main/")
 
 import tofy
 
@@ -21,6 +21,7 @@ class GameWindow(pyglet.window.Window):
 
         playerobject.draw()
         enemie1s.draw()
+        batch.draw()
         self.flip()
 
     def run(self):
@@ -64,16 +65,23 @@ class GamePlayer(tofy.entitytools.player.Player):
 x = GameWindow()
 
 
-pic = pyglet.image.load('C:/Users/PC/Desktop/anduril/examples/esas.png')
+tileimages = pyglet.resource.image("curses_800x600.png")
 
 
+tilemap = tofy.tiletools.tilemap.Tilemap()
+tilemap.create_from_img(tileimages, 16, 16)
+
+batch = pyglet.graphics.Batch()
+
+tileset = tofy.tiletools.tileset.Tileset(200, 200, 10, 10, tilemap, batch, None)
+tileset.createrectangle()
 
 
-playerobject = GamePlayer(x, pic, 100, 100, 0.1, None, None)
-playerobject.CreateNewTopic("on_attack")
+playerobject = GamePlayer(x, tilemap.tilemap[0], 100, 100, 0.1, None, None)
+playerobject.create_new_topic("on_attack")
 
-enemie1s = Snake(pic, 0, 0, 0.1, None, None)
-enemie1s.ListenToSubject(playerobject)
+enemie1s = Snake(tilemap.tilemap[1], 0, 0, 0.1, None, None)
+enemie1s.listen_to_subject(playerobject)
 
 x.run()
 

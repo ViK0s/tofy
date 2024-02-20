@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/Users/PC/Desktop/anduril/tofy/tiletools")
+sys.path.append("/Users/PC/Desktop/tofy-main/tofy/tiletools")
 
 
 import tile
