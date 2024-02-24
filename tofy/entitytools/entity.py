@@ -6,9 +6,9 @@ from pyglet.gl import GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA
 #the main observer class
 class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
     def __init__(self, img, relativex, relativey, z, batch, group, tileset):
-        x = tileset.x + (relativex*20)
-        y = tileset.y + (relativey*20) 
-        super().__init__(img, x, y, z = z, batch = batch, group=group)
+        x = tileset.x + relativex*(tileset.tilemap.tile_width+tileset.tilespace[0])
+        y = tileset.y + relativey*(tileset.tilemap.tile_height+tileset.tilespace[1]) 
+        super().__init__(img, x, y, z, batch = batch, group = group)
         self.tileset = tileset
         
         self._relativex = relativex
@@ -26,18 +26,17 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
     @relativex.setter
     def relativex(self, relativex):
         self._relativex = relativex
-        self.x = self.tileset.x + (self.relativex*20)
-
+        self.x = self.tileset.x + self.relativex*(self.tileset.tilemap.tile_width+self.tileset.tilespace[0])
 
     @property
     def relativey(self):
-        return self._relativex
+        return self._relativey
         
     
     @relativey.setter
-    def relativex(self, relativex):
-        self._relativex = relativex
-        self.x = self.tileset.x + (self.relativex*20)
+    def relativey(self, relativey):
+        self._relativey = relativey
+        self.y = self.tileset.y + self.relativey*(self.tileset.tilemap.tile_height+self.tileset.tilespace[1])
 
     
     

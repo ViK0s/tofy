@@ -12,7 +12,7 @@ class _TilemapNotInitialized(Exception):
 
 
 class Tileset:
-    def __init__(self, x, y, height, width, tilemap, batch, group, tilespace):
+    def __init__(self, x, y, height, width, tilemap, batch, group, tilespace:list):
         
         #height and width of the tileset
         self.height = height
@@ -23,9 +23,11 @@ class Tileset:
         if self.tilemap.tilemap == []:
             raise _TilemapNotInitialized
         
-       
-        self.tilelist = [[0]*height]*width
-        
+        #this is the true tilelist - all the tiles have real relative positions
+        #self.tilelist = [[]*height]*width
+        self.tilelist = []
+        #list of tiles that should be drawn now, allows implementation of FOV
+        self.tilestodraw = []
         #bottom left corner 
         self.x = x
         self.y = y
@@ -36,12 +38,16 @@ class Tileset:
 
         #the amount of space between tiles, in px
         self.tilespace = tilespace
-    def createrectangle(self, tileimgx:int, tileimgy:int):
-        for i in range(0, self.width):
-            for n in range(0, self.height):
-                #this looks pretty digusting and is not up to standards of PEP 8, but it works
-                self.tilelist[i].append(Tile(self.tilemap.tilemap[tileimgy][tileimgx],self.x + (i*(self.tilemap.tile_width+self.tilespace)), self.y + (n*(self.tilemap.tile_height+self.tilespace)), 0.1, self.batch, self.group, False))
+    def createsquare(self, tileimgx:int, tileimgy:int):
+        tempy = []
         
+        for i in range(0, self.height):
+            for n in range(0, self.width):
+                #this looks pretty digusting and is not up to standards of PEP 8, but it works """+ ((self.tilemap.tile_height+self.tilespace[1]))"""
+                tempy.append(Tile(self.tilemap.tilemap[tileimgy][tileimgx],self.x + (n*(self.tilemap.tile_width+self.tilespace[0])), self.y + (i*(self.tilemap.tile_height+self.tilespace[1])), 0.1, None, self.group, False))
+                
+            self.tilelist.append(tempy)
+            tempy = []
 
     def dbcreate():
         pass

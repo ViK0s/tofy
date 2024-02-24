@@ -8,9 +8,11 @@ from pyglet.window import key
 #enemies are observing for end turn and the player (attacking)
 class Player(entitytools.entity.Entity):
     def __init__(self, window, img, relativex, relativey, z, batch, group, tileset):
-        super().__init__(img, relativex, relativey, z, batch = batch, group=group, tileset = tileset)
+        super().__init__(img, relativex, relativey, z, batch, group, tileset)
         
-    
+        self.tileset = tileset
+
+
         self.key_handler = key.KeyStateHandler()
         self.key = key
         window.push_handlers(self.on_key_press)

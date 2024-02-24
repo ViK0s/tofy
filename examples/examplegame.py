@@ -58,10 +58,9 @@ class GamePlayer(tofy.entitytools.player.Player):
     def __init__(self, window, img, relativex, relativey, z, batch, group, tileset):
         super().__init__(window, img, relativex, relativey, z, batch, group, tileset)
     def on_key_press(self, symbol, modifiers):
-        if symbol == self.key.SPACE: #and not self.detect_collision(1, 0):
+        if symbol == self.key.SPACE and not self.detect_collision(1, 0):
             print("im tha playa")
             #self.dispatch_event("on_attack")
-            print(self.relativex)
             self.relativex += 1
             print(self.x)
 
@@ -71,24 +70,26 @@ x = GameWindow()
 tileimages = pyglet.resource.image("curses_800x600.png")
 
 
+
 tilemap = tofy.tiletools.tilemap.Tilemap()
 tilemap.create_from_img(tileimages, 16, 16)
 
-
-foreground = pyglet.graphics.Group(order=0)
-background = pyglet.graphics.Group(order=1)
+#print(tilemap.tile_height, tilemap.tile_width)
+foreground = pyglet.graphics.Group(order=1)
+background = pyglet.graphics.Group(order=0)
 batch = pyglet.graphics.Batch()
 
+#testcollisiontile = tofy.tiletools.tile.Tile(tilemap.tilemap[5][5], 40, 40, 0.1, batch, foreground, True)
 
 
+tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 10, 10, tilemap, batch, background, [4, 10])
+esa = tilesetdef.createsquare(2, 2)
 
-tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 10, 10, tilemap, batch, background)
-esa = tilesetdef.createrectangle(11, 2)
 
-
-playerobject = GamePlayer(x, tilemap.tilemap[0][1], 9, 9, 0.1, None, foreground, tilesetdef)
+playerobject = GamePlayer(x, tilemap.tilemap[15][1], 1, 0, 0.1, batch, foreground, tilesetdef)
 playerobject.create_new_topic("on_attack")
 
+tilesetdef.tilelist[0][5].collidable = True
 
 #enemie1s = Snake(tilemap.tilemap[1][1], 0, 0, 0.1, None, None)
 #enemie1s.listen_to_subject(playerobject)
