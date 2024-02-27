@@ -10,8 +10,6 @@ class Player(entitytools.entity.Entity):
     def __init__(self, window, img, relativex, relativey, z, batch, group, tileset):
         super().__init__(img, relativex, relativey, z, batch, group, tileset)
         
-        self.tileset = tileset
-
 
         self.key_handler = key.KeyStateHandler()
         self.key = key
@@ -23,8 +21,12 @@ class Player(entitytools.entity.Entity):
     # this should be overwritten when creating a new game!
     def on_key_press(self, symbol, modifiers):
         pass
-    
-    def detect_collision(self, relativechangex, relativechangey):
-        if self.tileset.tilelist[self.relativey + relativechangey][self.relativex + relativechangex].collidable == True: return True 
-
+    #detect if entity or collidable tile is on the tile we want to move to
+    #should probably be made for entity class
+    def detect_collision(self, relativechangex, relativechangey, world):
+        if self.tileset.tilelist[self.relativey + relativechangey][self.relativex + relativechangex].collidable == True: 
+            return True 
         
+        for i in world.entitylist:
+            if i.relativex == self.relativex + relativechangex and i.relativey == self.relativey + relativechangey:
+                return True
