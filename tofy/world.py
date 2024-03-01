@@ -5,16 +5,19 @@ class World():
         self.tilesetlist = tilesetlist
         self.player = player
         self.entitylist = entitylist
-    
+        self.visibletiles = []
     """
     a really inefficient implementation of raycasting, this will need a major rework, but it doesn't lag so it's
     fine for now?
     """
     def checkFOV(self):
-        
+        #loop through tiles that were visible and make them invisible so the player knows which ones are unactive
+        for i in self.tilesetlist[0].tilelist:
+            for n in i:
+                n.visiblebyplayer = False
+        # lists of the points that are visible
         top = []
         down = []
-
         left = []
         right = []
 
@@ -39,6 +42,8 @@ class World():
                     for bruh in k:
                         if bruh == n.relativepos:
                             n.batch = self.tilesetlist[0].batch
+                            n.visiblebyplayer = True
+
         
         
                 

@@ -59,7 +59,6 @@ class GamePlayer(tofy.entitytools.player.Player):
         super().__init__(window, img, relativex, relativey, z, batch, group, tileset)
     def on_key_press(self, symbol, modifiers):
         if symbol == self.key.RIGHT and not self.detect_collision(1, 0, worldobject):
-            print("im tha playa")
             #self.dispatch_event("on_attack")
             self.relativex += 1
             #print(self.x)
@@ -108,12 +107,14 @@ tilesetdef.tilelist[11][9].collidable = True
 tilesetdef.tilelist[9][10].collidable = True
 tilesetdef.tilelist[9][9].collidable = True
 tilesetdef.tilelist[9][11].collidable = True
+
+
 #enemie1s = Snake(tilemap.tilemap[1][1], 3, 0, 0.1, batch, foreground, tilesetdef)
 #enemie1s.listen_to_subject(playerobject)
 
 worldobject = tofy.world.World([tilesetdef], playerobject, [])
 worldobject.checkFOV()
-#print(worldobject.LineOfSight(1, 1, 3, 4))
+
 
 x.run()
 

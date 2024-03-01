@@ -42,6 +42,8 @@ class Tileset:
         #the amount of space between tiles, in px
         self.tilespace = tilespace
         
+        #list of visible tiles
+        self.visible = []
     def createsquare(self, tileimgx:int, tileimgy:int):
         tempy = []
         
@@ -55,3 +57,5 @@ class Tileset:
 
     def dbcreate():
         pass
+
+    
