@@ -48,7 +48,7 @@ class Tileset:
         for i in range(0, self.height):
             for n in range(0, self.width):
                 #this looks pretty digusting and is not up to standards of PEP 8, but it works
-                tempy.append(Tile(self.tilemap.tilemap[tileimgy][tileimgx],self.x + (n*(self.tilemap.tile_width+self.tilespace[0])), self.y + (i*(self.tilemap.tile_height+self.tilespace[1])), 0.1, None, self.group, False))
+                tempy.append(Tile(self.tilemap.tilemap[tileimgy][tileimgx],self.x + (n*(self.tilemap.tile_width+self.tilespace[0])), self.y + (i*(self.tilemap.tile_height+self.tilespace[1])), 0.1, None, self.group, False, n, i))
                 
             self.tilelist.append(tempy)
             tempy = []

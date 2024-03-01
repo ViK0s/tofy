@@ -58,11 +58,20 @@ class GamePlayer(tofy.entitytools.player.Player):
     def __init__(self, window, img, relativex, relativey, z, batch, group, tileset):
         super().__init__(window, img, relativex, relativey, z, batch, group, tileset)
     def on_key_press(self, symbol, modifiers):
-        if symbol == self.key.SPACE and not self.detect_collision(1, 0, worldobject):
+        if symbol == self.key.RIGHT and not self.detect_collision(1, 0, worldobject):
             print("im tha playa")
             #self.dispatch_event("on_attack")
             self.relativex += 1
-            print(self.x)
+            #print(self.x)
+            worldobject.checkFOV()
+        if symbol == self.key.LEFT and not self.detect_collision(-1, 0, worldobject):
+            self.relativex -= 1
+            worldobject.checkFOV()
+        if symbol == self.key.UP and not self.detect_collision(0, 1, worldobject):
+            self.relativey += 1
+            worldobject.checkFOV()
+        if symbol == self.key.DOWN and not self.detect_collision(0, -1, worldobject):
+            self.relativey -= 1
             worldobject.checkFOV()
 
 x = GameWindow()
@@ -83,24 +92,28 @@ batch = pyglet.graphics.Batch()
 #testcollisiontile = tofy.tiletools.tile.Tile(tilemap.tilemap[5][5], 40, 40, 0.1, batch, foreground, True)
 
 
-tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 10, 10, tilemap, batch, background, [4, 10])
+tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 20, 20, tilemap, batch, background, [4, 10])
 esa = tilesetdef.createsquare(2, 2)
 
 
-playerobject = GamePlayer(x, tilemap.tilemap[15][1], 1, 0, 0.1, batch, foreground, tilesetdef)
+playerobject = GamePlayer(x, tilemap.tilemap[15][1], 10, 10, 0.1, batch, foreground, tilesetdef)
 playerobject.create_new_topic("on_attack")
 
 
-#print(playerobject.y)
-#print(tilesetdef.tilelist[0][2].x, tilesetdef.tilelist[0][2].y)
-#tilesetdef.tilelist[0][5].collidable = True
 
-enemie1s = Snake(tilemap.tilemap[1][1], 3, 0, 0.1, batch, foreground, tilesetdef)
+tilesetdef.tilelist[11][11].collidable = True
+tilesetdef.tilelist[11][10].collidable = True
+tilesetdef.tilelist[11][9].collidable = True
+#testing lower fov
+tilesetdef.tilelist[9][10].collidable = True
+tilesetdef.tilelist[9][9].collidable = True
+tilesetdef.tilelist[9][11].collidable = True
+#enemie1s = Snake(tilemap.tilemap[1][1], 3, 0, 0.1, batch, foreground, tilesetdef)
 #enemie1s.listen_to_subject(playerobject)
 
-worldobject = tofy.world.World([tilesetdef], playerobject, [enemie1s])
+worldobject = tofy.world.World([tilesetdef], playerobject, [])
 worldobject.checkFOV()
-
+#print(worldobject.LineOfSight(1, 1, 3, 4))
 
 x.run()
 
