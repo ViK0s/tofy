@@ -44,6 +44,9 @@ class Tileset:
         
         #list of visible tiles
         self.visible = []
+
+        #list of collidables
+        self.collidabletiles = []
     def createsquare(self, tileimgx:int, tileimgy:int):
         tempy = []
         
@@ -55,6 +58,11 @@ class Tileset:
             self.tilelist.append(tempy)
             tempy = []
 
+    def aggregate_collidables(self):
+        for ytiles in self.tilelist:
+            for xtile in ytiles:
+                if xtile.collidable: 
+                    self.collidabletiles.append(xtile)
     def dbcreate():
         pass
 

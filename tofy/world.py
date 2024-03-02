@@ -15,6 +15,10 @@ class World():
         for i in self.tilesetlist[0].tilelist:
             for n in i:
                 n.visiblebyplayer = False
+        #do the same for entities
+        for i in self.entitylist:
+            i.visible = False
+        
         # lists of the points that are visible
         top = []
         down = []
@@ -23,18 +27,32 @@ class World():
 
         allpoints = []
 
-        for i in range(0, self.tilesetlist[0].width):
-            top = self.bresenhamLOS(self.player.relativex, self.player.relativey, i, self.tilesetlist[0].height)
-            down = self.bresenhamLOS(self.player.relativex, self.player.relativey, i, 0)
+        # cast rays to points of interests, here it casts them all from the player to the max range
+        for i in range(self.player.relativex - self.player.FOVrange, self.player.relativex + self.player.FOVrange):
+            top = self.bresenhamLOS(self.player.relativex, self.player.relativey, i, self.player.relativey + self.player.FOVrange)
+            down = self.bresenhamLOS(self.player.relativex, self.player.relativey, i, self.player.relativey - self.player.FOVrange)
+            allpoints.append(top)
+            allpoints.append(down)
+
+        for i in range(self.player.relativey - self.player.FOVrange, self.player.relativey + self.player.FOVrange):
+            left = self.bresenhamLOS(self.player.relativex, self.player.relativey, self.player.relativex - self.player.FOVrange, i)
+            right = self.bresenhamLOS(self.player.relativex, self.player.relativey, self.player.relativex + self.player.FOVrange, i)
+            allpoints.append(left)
+            allpoints.append(right)
+
+        # this is the version that casts the rays over the whole map
+        """ for i in range(0, self.tilesetlist[0].width):
+            top = self.bresenhamLOS(self.player.relativex, self.player.relativey, i, self.tilesetlist[0].height, 5)
+            down = self.bresenhamLOS(self.player.relativex, self.player.relativey, i, 0, 5)
             allpoints.append(top)
             allpoints.append(down)
  
         
         for i in range(0, self.tilesetlist[0].height):
-            left = self.bresenhamLOS(self.player.relativex, self.player.relativey, 0, i)
-            right = self.bresenhamLOS(self.player.relativex, self.player.relativey, self.tilesetlist[0].width, i)
+            left = self.bresenhamLOS(self.player.relativex, self.player.relativey, 0, i, 5)
+            right = self.bresenhamLOS(self.player.relativex, self.player.relativey, self.tilesetlist[0].width, i, 5)
             allpoints.append(left)
-            allpoints.append(right)
+            allpoints.append(right)"""
         
         for i in self.tilesetlist[0].tilelist:
             for n in i:
@@ -44,9 +62,12 @@ class World():
                             n.batch = self.tilesetlist[0].batch
                             n.visiblebyplayer = True
 
-        
-        
-                
+        for i in self.entitylist:
+            for k in allpoints:
+                    for bruh in k:
+                        if bruh == (i.relativex, i.relativey):
+                            i.batch = self.tilesetlist[0].batch
+                            i.visible = True
                 
     # implementation of bresenham line algorithm
     # based on the official python library with the same name
@@ -79,10 +100,13 @@ class World():
             loop through the y and then x axis of tilelist and check if the tile is a collidable
             if it is, don't print any more points
             """
-            for i in self.tilesetlist[0].tilelist:
+            """for i in self.tilesetlist[0].tilelist:
                 for n in i:
                     if n.relativepos == current and n.collidable == True:
-                        return points
+                        return points"""
+            for i in self.tilesetlist[0].collidabletiles:
+                if i.relativepos == current:
+                    return points
             if D >= 0:
                 y += 1
                 D -= 2*dx

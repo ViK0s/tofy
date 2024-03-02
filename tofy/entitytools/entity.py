@@ -14,6 +14,7 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
         self._relativex = relativex
         self._relativey = relativey
     
+        self.relativepos = (relativex, relativey)
         #list of subjects to listen to
         self.subjects = []
     

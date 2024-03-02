@@ -7,7 +7,7 @@ from pyglet.window import key
 #player is observing for the input, and enemies (attacking)
 #enemies are observing for end turn and the player (attacking)
 class Player(entitytools.entity.Entity):
-    def __init__(self, window, img, relativex, relativey, z, batch, group, tileset):
+    def __init__(self, window, img, relativex, relativey, z, batch, group, tileset, FOVrange = 10):
         super().__init__(img, relativex, relativey, z, batch, group, tileset)
         
 
@@ -15,7 +15,7 @@ class Player(entitytools.entity.Entity):
         self.key = key
         window.push_handlers(self.on_key_press)
         #self.event_handlers = [self, self.key_handler]
-
+        self.FOVrange = FOVrange
         
     # this is the default method for handling player controls
     # this should be overwritten when creating a new game!

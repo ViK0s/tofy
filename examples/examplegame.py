@@ -91,7 +91,7 @@ batch = pyglet.graphics.Batch()
 #testcollisiontile = tofy.tiletools.tile.Tile(tilemap.tilemap[5][5], 40, 40, 0.1, batch, foreground, True)
 
 
-tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 20, 20, tilemap, batch, background, [4, 10])
+tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 50, 50, tilemap, batch, background, [4, 10])
 esa = tilesetdef.createsquare(2, 2)
 
 
@@ -103,16 +103,18 @@ playerobject.create_new_topic("on_attack")
 tilesetdef.tilelist[11][11].collidable = True
 tilesetdef.tilelist[11][10].collidable = True
 tilesetdef.tilelist[11][9].collidable = True
+
 #testing lower fov
 tilesetdef.tilelist[9][10].collidable = True
 tilesetdef.tilelist[9][9].collidable = True
 tilesetdef.tilelist[9][11].collidable = True
 
+tilesetdef.aggregate_collidables()
 
-#enemie1s = Snake(tilemap.tilemap[1][1], 3, 0, 0.1, batch, foreground, tilesetdef)
-#enemie1s.listen_to_subject(playerobject)
+enemie1s = Snake(tilemap.tilemap[1][1], 3, 0, 0.1, batch, foreground, tilesetdef)
+enemie1s.listen_to_subject(playerobject)
 
-worldobject = tofy.world.World([tilesetdef], playerobject, [])
+worldobject = tofy.world.World([tilesetdef], playerobject, [enemie1s])
 worldobject.checkFOV()
 
 
