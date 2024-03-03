@@ -1,6 +1,6 @@
 import pyglet
 from pyglet.gl import GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA
-
+from tofy.tiletools.tileset import *
 
 
 #the main observer class
@@ -14,11 +14,11 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
         self._relativex = relativex
         self._relativey = relativey
     
-        self.relativepos = (relativex, relativey)
+        #self.relativepos = (relativex, relativey)
         #list of subjects to listen to
         self.subjects = []
     
-        
+        self.tilesetloc = 0
     @property
     def relativex(self):
         return self._relativex
@@ -39,8 +39,8 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
         self._relativey = relativey
         self.y = self.tileset.y + self.relativey*(self.tileset.tilemap.tile_height+self.tileset.tilespace[1])
 
-    
-    
+
+
     def listen_to_subject(self, subject):
         self.subjects.append(subject)
         subject.push_handlers(self)  
@@ -56,4 +56,9 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
         del self
     def behaviour():
         pass
-    
+    def settileset(self, tilesetloc, newtileset:Tileset, newposx, newposy):
+        self.tilesetloc = tilesetloc
+        self.tileset = newtileset
+        self.relativex = newposx
+        self.relativey = newposy
+        

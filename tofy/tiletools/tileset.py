@@ -47,6 +47,14 @@ class Tileset:
 
         #list of collidables
         self.collidabletiles = []
+
+        #find the corners of the tileset so it's easier to manipulate it's position
+        #starting from downward left, going counterclockwise
+        self.x1 = self.x
+        self.y1 = self.y
+
+        self.x2 = self.x + (self.width * (self.tilemap.tile_width+self.tilespace[0]))
+        self.y2 = self.y
     def createsquare(self, tileimgx:int, tileimgy:int):
         tempy = []
         
@@ -57,7 +65,7 @@ class Tileset:
                 
             self.tilelist.append(tempy)
             tempy = []
-
+    #useful for making a list of collidables
     def aggregate_collidables(self):
         for ytiles in self.tilelist:
             for xtile in ytiles:
