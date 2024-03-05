@@ -55,12 +55,15 @@ class Tileset:
 
         self.x2 = self.x + (self.width * (self.tilemap.tile_width+self.tilespace[0]))
         self.y2 = self.y
+
+        self.y3 = self.y + (self.height * (self.tilemap.tile_height+self.tilespace[1]))
+    
     def createsquare(self, tileimgx:int, tileimgy:int):
         tempy = []
         
         for i in range(0, self.height):
             for n in range(0, self.width):
-                #this looks pretty digusting and is not up to standards of PEP 8, but it works
+                #this looks pretty digusting and is not up to standards of PEP 8, but it works #pxwidth
                 tempy.append(Tile(self.tilemap.tilemap[tileimgy][tileimgx],self.x + (n*(self.tilemap.tile_width+self.tilespace[0])), self.y + (i*(self.tilemap.tile_height+self.tilespace[1])), 0.1, None, self.group, False, n, i))
                 
             self.tilelist.append(tempy)

@@ -62,9 +62,9 @@ class GamePlayer(tofy.entitytools.player.Player):
         if symbol == self.key.RIGHT and not self.detect_collision(1, 0, worldobject):
             #self.dispatch_event("on_attack")
             self.relativex += 1
-            #print(self.x)
+
             self.update_vectors()
-            #print(self.magnitude3, self.magnitude2)
+
             worldobject.checkFOV()
             centeredcam.position = playerobject.x, playerobject.y
         if symbol == self.key.LEFT and not self.detect_collision(-1, 0, worldobject):
@@ -83,7 +83,11 @@ class GamePlayer(tofy.entitytools.player.Player):
             worldobject.checkFOV()
             centeredcam.position = playerobject.x, playerobject.y
         if symbol == self.key.SPACE:
-            print(self.relativex, self.relativey, self.tilesetloc)
+            print("relative positions: ",self.relativex, self.relativey, self.tilesetloc)
+            print("non relative ones: ", self.x, self.y)
+    
+
+
 #x = pyglet.window.Window(resizable=True)#GameWindow(resizable=True)
 x = GameWindow()
 """@x.event
@@ -112,8 +116,9 @@ tilesetdef = tofy.tiletools.tileset.Tileset(20, 20, 30, 30, tilemap, batch, back
 esa = tilesetdef.createsquare(2, 2)
 
 
-playerobject = GamePlayer(x, tilemap.tilemap[15][1], 10, 10, 0.1, batch, foreground, tilesetdef)
+playerobject = GamePlayer(x, tilemap.tilemap[15][1], 1, 0, 0.1, batch, foreground, tilesetdef)
 playerobject.create_new_topic("on_attack")
+playerobject.create_new_topic("on_tileset_change")
 
 centeredcam.position = playerobject.x, playerobject.y
 
@@ -121,10 +126,24 @@ tilesetdef.tilelist[11][11].collidable = True
 tilesetdef.tilelist[11][10].collidable = True
 tilesetdef.tilelist[11][9].collidable = True
 
+tilesetdef.tilelist[11][11].image = tilemap.tilemap[3][3]
+tilesetdef.tilelist[11][10].image = tilemap.tilemap[3][3]
+tilesetdef.tilelist[11][9].image = tilemap.tilemap[3][3]
+
 #testing lower fov
 tilesetdef.tilelist[9][10].collidable = True
 tilesetdef.tilelist[9][9].collidable = True
 tilesetdef.tilelist[9][11].collidable = True
+
+
+tilesetdef.tilelist[9][10].image = tilemap.tilemap[3][3]
+tilesetdef.tilelist[9][9].image = tilemap.tilemap[3][3]
+tilesetdef.tilelist[9][11].image = tilemap.tilemap[3][3]
+
+
+tilesetdef.tilelist[25][29].collidable = True
+
+tilesetdef.tilelist[25][29].image = tilemap.tilemap[3][3]
 
 tilesetdef.aggregate_collidables()
 
@@ -135,10 +154,16 @@ worldobject = tofy.world.World([tilesetdef], playerobject, [enemie1s], tilemap, 
 worldobject.testworldcreate()
 worldobject.tilesetlist[0] = tilesetdef
 worldobject.checkFOV()
-#print(worldobject.tilesetlist[1].x)
-"""for y in worldobject.tilesetlist[1].tilelist:
-    for bruh in y:
-        bruh.batch = batch"""
+
+playerobject.push_handlers(worldobject)
+
+worldobject.tilesetlist[1].tilelist[0][0].collidable = True
+
+
+"""print(len(worldobject.tilesetlist))
+print(worldobject.tilesetlist[9].x,worldobject.tilesetlist[9].y)
+print(worldobject.tilesetlist[0].y3)"""
+
 
 #x.run()
 #pyglet.clock.schedule(on_update)
