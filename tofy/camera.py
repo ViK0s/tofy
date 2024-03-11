@@ -129,6 +129,7 @@ class CenteredCamera(Camera):
         x = -self._window.width // 2 / self._zoom + self.offset_x
         y = -self._window.height // 2 / self._zoom + self.offset_y
 
+        
         view_matrix = self._window.view.translate((-x * self._zoom, -y * self._zoom, 0))
         view_matrix = view_matrix.scale((self._zoom, self._zoom, 1))
         self._window.view = view_matrix

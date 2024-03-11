@@ -8,7 +8,8 @@ import sys
 sys.path.append("/Users/micha/Desktop/tofy-main/tofy")
 
 
-import entitytools
-import tiletools
-import world
-import camera
+from tofy import entitytools
+from tofy import tiletools
+from tofy import world
+from tofy import camera
+import opensimplex

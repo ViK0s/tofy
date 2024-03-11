@@ -61,4 +61,38 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
         self.tileset = newtileset
         self.relativex = newposx
         self.relativey = newposy
-        
+        self.push_handlers(newtileset)
+
+
+class Enemy(Entity):
+    def __init__(self, img, relativex, relativey, z, batch, group, tileset, attributes:dict):
+        super().__init__(img, relativex, relativey, z, batch, group, tileset)
+        self.attributes = attributes
+        self.risk = self.calculaterisk()
+        self.hp = attributes["hp"]
+    def on_attack(self, dmg, atkent, s ,d):
+        #print(self.hp)
+        #print("the enemy is getting attacked", dmg, atkent)
+        self.checkhp()
+
+    def calculaterisk(self):
+        risk = (self.attributes["dmg"] * 5) + (self.attributes["speed"] * 2) + (len(self.attributes["special"]) * 20)
+        return risk
+    def detectcollisionwithplayer(self, i, relativechangex, relativechangey):
+        if i.relativex == self.relativex + relativechangex and i.relativey == self.relativey + relativechangey:
+            self.dispatch_event("attack", self.attributes["dmg"], self.attributes["name"])
+            return True
+    def checkhp(self):
+        if self.attributes["hp"] <= 0:
+            self.batch = None
+
+class Item(Entity):
+    def __init__(self, img, relativex, relativey, z, batch, group, tileset, attributes:dict):
+        super().__init__(img, relativex, relativey, z, batch, group, tileset)
+        self.attributes = attributes
+        self.hp = attributes["hp"]
+    """def on_attack(self, ):
+        pass"""
+
+    def calculateworth(self):
+        pass

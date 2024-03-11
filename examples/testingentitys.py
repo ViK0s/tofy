@@ -1,6 +1,6 @@
 import pyglet
 import sys
-sys.path.append("/Users/PC/Desktop/tofy-main/")
+sys.path.append("/Users/micha/Desktop/tofy-main/")
 import tofy
 
 tileimages = pyglet.resource.image("curses_800x600.png")

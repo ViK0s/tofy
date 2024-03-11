@@ -7,6 +7,7 @@ class Tile(pyglet.sprite.Sprite):
         self.collidable = collidable
         self.relativepos = (relativex, relativey)
         self._visiblebyplayer = visiblebyplayer
+        self.hp = 5
     @property
     def visiblebyplayer(self):
         return self._visiblebyplayer
@@ -18,7 +19,7 @@ class Tile(pyglet.sprite.Sprite):
         if visiblebyplayer == False:
             self.color = (128,128,128)
         else:
-            self.color = (255, 255, 255)
+            self.color = (72, 31, 1)
     
     def changecolor(self):
         pass
