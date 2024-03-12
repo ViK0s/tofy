@@ -1,29 +1,33 @@
+"""Module containing the world class"""
+
 from tofy import tiletools
 from tiletools import tileset
 from entitytools import entity
 import random
 
 class World():
+    """Base world class, contains every tileset, entity etc. that is in the game"""
     def __init__(self, tilesetlist, player, tilemap, batch, group, atrlist, entitygroup, itematrlist):
         self.tilesetlist = tilesetlist
         self.player = player
         
-        #list of a list of enemies, coordinates are tileset based, meaning index = 0 is the first tileset
+
         self.entitylist = []
         
-
+        #which tiles were discovered by the player
         self.visibletiles = []
+        
         self.tilemap = tilemap
         self.batch = batch
         self.group = group
 
-
+        #position of the lower left corner
         self.x = self.tilesetlist[0].x
         self.y = self.tilesetlist[0].y
+        
         # a list of attributes so that we know what enemies to create
         self.atrlist = atrlist
         self.entitygroup = entitygroup
-
         self.itematrlist = itematrlist
     """
     a really inefficient implementation of raycasting, this will need a major rework, but it doesn't lag so it's
@@ -336,11 +340,9 @@ class World():
                             i.batch = self.tilesetlist[currenttileset].batch
                             i.visible = True"""
                 
-    # implementation of bresenham line algorithm
-    # based on the official python library with the same name
-    # with slight modification to account for visibility and different type return
-    # this will need a rework to account for visibility range
+   
     def checkFOV(self):
+        """Implementation of the raycasting FOV"""
         currenttileset = self.player.tilesetloc
         
         #loop through tiles that were visible and make them invisible so the player knows which ones are unactive
@@ -350,11 +352,6 @@ class World():
         #do the same for entities
         for i in self.entitylist:
             i.visible = False
-        
-
-
-        #clean tiles when switching to new tileset
-        
 
 
         # lists of the points that are visible
@@ -379,6 +376,7 @@ class World():
             allpoints.append(left)
             allpoints.append(right)
 
+        #add the tiles to the batch so they are drawn
         for i in self.tilesetlist[currenttileset].tilelist:
             for n in i:
                 for k in allpoints:
@@ -397,7 +395,11 @@ class World():
 
 
     def bresenhamLOS(self, x0, y0, x1, y1):
-    
+        """
+        implementation of bresenham line algorithm
+        based on the official python library with the same name
+        with slight modification to account for visibility and different type return
+        """
         dx = x1 - x0
         dy = y1 - y0
 
@@ -421,13 +423,8 @@ class World():
             if current[0] >= 0 and current[1] >= 0:
                 points.append(current)
             """
-            loop through the y and then x axis of tilelist and check if the tile is a collidable
-            if it is, don't print any more points
+            check if the tile on the checked position is collidable
             """
-            """for i in self.tilesetlist[0].tilelist:
-                for n in i:
-                    if n.relativepos == current and n.collidable == True:
-                        return points"""
             for i in self.tilesetlist[self.player.tilesetloc].collidabletiles:
                 if i.relativepos == current:
                     return points
@@ -440,6 +437,9 @@ class World():
         return points
     
     def testworldcreate(self):
+        """Create the world"""
+        
+        #save our first tileset so that we know the starting positions
         temporary = self.tilesetlist[0]
         self.tilesetlist = []
         x = self.x
@@ -447,13 +447,11 @@ class World():
 
         
 
-        #the range is the max lenght of the 1D list
+
         for height in range(0, 9):
-                
-
-
                 for width in range(0, 9):   #self.tilemap.tile_width+self.tilespace[0]
-                    index = width + 10 * height
+                    #index = width + 10 * height
+                    #make a coin flip to know if the tile will be a cave or not
                     caveornot = random.randint(0, 1)
                     if caveornot == 0:
                         temp = tileset.Tileset(x + (width*temporary.x2), y + (height * temporary.y3), 30, 30, self.tilemap, self.batch, self.group, [4, 10])
@@ -468,31 +466,38 @@ class World():
                         temp.aggregate_noncollidable()
                         self.tilesetlist.append(temp)
                         
-                        #self.populate(temp, len(self.tilesetlist) - 1)
                     
                     
-        self.maxtileset = len(self.tilesetlist) - 1
+        #self.maxtileset = len(self.tilesetlist) - 1
         self.spawnplayer()
+    
     def cleantileset(self, tilesetindex):
+        """Runs when the player changes his tileset, makes the previous tileset not visible to the player"""
         for i in self.tilesetlist[tilesetindex].tilelist:
             for n in i:
                 n.visiblebyplayer = False
 
     def on_tileset_change(self, tilesetindex):
-        #print("changed tileset", tilesetindex)
+        """handle the event sent from player"""
         self.cleantileset(tilesetindex)
 
     def populate(self, tilesetindex):
+        """Generates new enemies"""
         
-
-        risk = 0
+        #risk is not used anymore, it was supposed to be a system of regulating how many enemies there will be
+        #risk = 0
+        #maxrisk and maxreward are random integers that say what tf can even be generated
+        
         #check what type of encounter there will be
         # type 1 is enemy infested, type 2 is risky,  type 3 is clear
         encountertype = random.randint(1, 3)
-        #maxrisk and maxreward are random integers that say what tf can even be generated
+        
         if encountertype == 1 and self.tilesetlist[tilesetindex].unexplored:
+            #choose the amount of enemies there will be
             enemycount = random.randint(1, 4)
+            #choose the position
             randpos = random.randint(0, len(self.tilesetlist[tilesetindex].noncollidabletiles))    
+            #choose which enemy to spawn
             randenemy = random.randint(0, len(self.atrlist))
             for i in range(0, enemycount):
                 randpos = random.randint(0, len(self.tilesetlist[tilesetindex].noncollidabletiles))
@@ -513,8 +518,6 @@ class World():
                 enemy = entity.Enemy(self.tilemap.tilemap[1][1], self.tilesetlist[tilesetindex].noncollidabletiles[randpos-1].relativepos[0], self.tilesetlist[tilesetindex].noncollidabletiles[randpos-1].relativepos[1], 0.1, self.batch, self.entitygroup, self.tilesetlist[tilesetindex], self.atrlist[randenemy-1])
                 enemy.create_new_topic("attack")
                 enemy.push_handlers(self.player)
-                #enemy.settileset(tilesetindex, self.tilesetlist[tilesetindex], self.tilesetlist[tilesetindex].noncollidabletiles[randpos].relativepos[0], self.tilesetlist[tilesetindex].noncollidabletiles[randpos].relativepos[1])
-                #temp.append(enemy)
                 enemy.tilesetloc = tilesetindex
                 enemy.listen_to_subject(self.player)
                 
@@ -523,6 +526,8 @@ class World():
                 #risk += enemy.risk
                 
                 #maxreward = random.randint(risk, 100 + risk)
+            
+            #spawn a random item
             randpos = random.randint(0, len(self.tilesetlist[tilesetindex].noncollidabletiles))
             item = entity.Item(self.tilemap.tilemap[5][0], self.tilesetlist[tilesetindex].noncollidabletiles[randpos-1].relativepos[0], self.tilesetlist[tilesetindex].noncollidabletiles[randpos-1].relativepos[1], 0.1, self.batch, self.entitygroup, self.tilesetlist[tilesetindex], self.itematrlist[randenemy-1])
             
@@ -536,6 +541,7 @@ class World():
             
             
     def on_attack(self, dmg, atkpos, name, loltype):
+        """Fired when player attacks entities (when picking an item the player also attacks them)"""
         for i in self.entitylist:
             if i.relativex == atkpos[0] and i.relativey == atkpos[1]:
                 i.hp -= dmg
@@ -551,18 +557,26 @@ class World():
 
 
     def mine(self, pos, tilesetloc):
+        """Fired when player tries to mine a tile"""
         self.tilesetlist[tilesetloc].tilelist[pos[0]][pos[1]].hp -= 1
         if self.tilesetlist[tilesetloc].tilelist[pos[0]][pos[1]].hp <= 0:
             self.tilesetlist[tilesetloc].tilelist[pos[0]][pos[1]].collidable = False
             self.tilesetlist[tilesetloc].tilelist[pos[0]][pos[1]].image = self.tilemap.tilemap[4][1]
             self.tilesetlist[tilesetloc].aggregate_collidables()
+            #make a coin flip to know if an item dropped
             rand = random.randint(0, 1)
             if rand == 1:
+            #randomize which item will drop
             #    randomitem = random.randint(1, 2)
                 self.entitylist.append(entity.Item(self.tilemap.tilemap[5][0],pos[1] ,pos[0], 0.1, self.batch, self.entitygroup, self.tilesetlist[tilesetloc], self.itematrlist[1]))
         
     def enemymovement(self):
+        """Handle enemy movement"""
+        
         allpoints = []
+        
+
+        #cast lines around the enemy
         for entit in self.entitylist:
             if type(entit) == entity.Enemy and entit.tilesetloc == self.player.tilesetloc:
                 for i in range(entit.relativex - entit.attributes["fov"], entit.relativex + entit.attributes["fov"]):
@@ -577,20 +591,19 @@ class World():
                     allpoints.append(left)
                     allpoints.append(right)
                 moves = self.bresenhamLOS(entit.relativex, entit.relativey, self.player.relativex, self.player.relativey)
+                #check if one of the points inside the line has the same position as player
                 for i in allpoints:
                     for k in i:
                         if k == (self.player.relativex, self.player.relativey):
-                            #moves = self.bresenhamLOS(entit.relativex, entit.relativey, self.player.relativex, self.player.relativey)
-                            #print(moves[0][0], moves[0][1])
+                            #if there's no more moves to do, don't do them so that the enemy doesn't go into the players tile
                             if len(moves) == 1:
                                 return
                             if moves[1] != (self.player.relativex, self.player.relativey):
                                 entit.relativex = moves[1][0]
                                 entit.relativey = moves[1][1]
-                    
-                    #if moves[1] == (self.player.relativex, self.player.relativey):
-                        #self.player.atr["hp"] =- entit.attributes["dmg"]
+    
     def spawnplayer(self):
+        """Choose a spawn location for the player and place him"""
         for tileset in self.tilesetlist:
             index = self.tilesetlist.index(tileset)
             if len(tileset.noncollidabletiles) > 5:

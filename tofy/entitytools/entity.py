@@ -1,3 +1,6 @@
+"""Base module containing classes representing objects in the game world"""
+
+
 import pyglet
 from pyglet.gl import GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA
 from tofy.tiletools.tileset import *
@@ -5,10 +8,13 @@ from tofy.tiletools.tileset import *
 
 #the main observer class
 class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
+    """Base class upon which every object expands on"""
     def __init__(self, img, relativex, relativey, z, batch, group, tileset):
+        #calculate the real position
         x = tileset.x + relativex*(tileset.tilemap.tile_width+tileset.tilespace[0])
         y = tileset.y + relativey*(tileset.tilemap.tile_height+tileset.tilespace[1]) 
         super().__init__(img, x, y, z, batch = batch, group = group)
+        
         self.tileset = tileset
         
         self._relativex = relativex
@@ -42,57 +48,62 @@ class Entity(pyglet.sprite.Sprite, pyglet.event.EventDispatcher):
 
 
     def listen_to_subject(self, subject):
+        """Listen to a specific object for events"""
         self.subjects.append(subject)
         subject.push_handlers(self)  
     def stop_listening_to_subject(self, subject):
+        """Stop listening to a specific object for events"""
         self.subjects.remove(subject)
         subject.remove_handler(self)
     def create_new_topic(self, topic_name:str):
+        """Create a new event type"""
         self.register_event_type(topic_name)
-    #deleting the entity will need to not only remove it's initilized class, but also to remove it from every subject, which means, we need to use an event system to say so to everyone
-    def delete(self):
-        for subject in self.subjects:
-            self.StopListeningToSubject(subject)
-        del self
-    def behaviour():
-        pass
+
+
     def settileset(self, tilesetloc, newtileset:Tileset, newposx, newposy):
+        """Set a new tileset and location on it"""
         self.tilesetloc = tilesetloc
         self.tileset = newtileset
         self.relativex = newposx
         self.relativey = newposy
+        #push events to the new tileset
         self.push_handlers(newtileset)
 
 
 class Enemy(Entity):
+    """Base class for enemies"""
     def __init__(self, img, relativex, relativey, z, batch, group, tileset, attributes:dict):
         super().__init__(img, relativex, relativey, z, batch, group, tileset)
         self.attributes = attributes
-        self.risk = self.calculaterisk()
+        #unused, when spawning enemies there was supposed to be a "risk limit", every would then have a risk attribute
+        #which would have been used to calculate the total risk
+        #self.risk = self.calculaterisk()
         self.hp = attributes["hp"]
     def on_attack(self, dmg, atkent, s ,d):
-        #print(self.hp)
-        #print("the enemy is getting attacked", dmg, atkent)
+        """handle the on_attack event"""
+        #sent by entitytools.player class
         self.checkhp()
 
-    def calculaterisk(self):
+    """def calculaterisk(self):
         risk = (self.attributes["dmg"] * 5) + (self.attributes["speed"] * 2) + (len(self.attributes["special"]) * 20)
-        return risk
+        return risk"""
+    
     def detectcollisionwithplayer(self, i, relativechangex, relativechangey):
         if i.relativex == self.relativex + relativechangex and i.relativey == self.relativey + relativechangey:
             self.dispatch_event("attack", self.attributes["dmg"], self.attributes["name"])
             return True
     def checkhp(self):
+        """Despawn the enemy if it's hp == 0"""
         if self.attributes["hp"] <= 0:
             self.batch = None
 
 class Item(Entity):
+    """Base class for items"""
     def __init__(self, img, relativex, relativey, z, batch, group, tileset, attributes:dict):
         super().__init__(img, relativex, relativey, z, batch, group, tileset)
         self.attributes = attributes
         self.hp = attributes["hp"]
-    """def on_attack(self, ):
-        pass"""
+
 
     def calculateworth(self):
         pass

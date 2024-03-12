@@ -1,3 +1,6 @@
+"""Submodule expanding upon entity by adding controls to an entity"""
+
+
 import entitytools
 import pyglet
 from pyglet.window import key
@@ -33,6 +36,9 @@ class Player(entitytools.entity.Entity):
     #detect if entity or collidable tile is on the tile we want to move to
     #should probably be made for entity class
     def detect_collision(self, relativechangex, relativechangey, world):
+        """Detect collisions on the same tileset and on ones that are adjecent to the player"""
+        
+        
         #check if you don't need to change the tileset
         #happens only  when you are moving from one tileset to the next one
         
@@ -95,10 +101,13 @@ class Player(entitytools.entity.Entity):
                 return True
             
     def update_vectors(self):
+        """Update vectors which are used for measuring the distance between the player and the upper right and lower right corners.
+        These vectors are used to see where the player is in relation to adjecent tilesets"""
         self.magnitude3 = math.sqrt((self.tileset.width-self.relativex)**2 + (self.tileset.height-self.relativey)** 2)
         self.magnitude2 = math.sqrt((self.tileset.width-self.relativex)**2 + (self.relativey)** 2)
     
     def count_items(self):
+        """Count items in inventory"""
         self.rootcount = 0
         self.stonecount = 0
         self.potcount = 0
@@ -110,6 +119,7 @@ class Player(entitytools.entity.Entity):
             elif item.attributes["name"] == "health potion":
                 self.potcount += 1
     def remove_item(self, name):
+        """Remove item from inventory"""
         for i in self.inventory:
             if i.attributes["name"] == name:
                 self.inventory.remove(i)

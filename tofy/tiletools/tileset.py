@@ -1,6 +1,6 @@
+"""Base module for tileset"""
+
 from tofy.tiletools.tile import Tile
-import sys
-import pyglet
 import opensimplex
 # this is something like a "game world"
 # this should have support for tiled, own tools could be a good idea too
@@ -60,8 +60,10 @@ class Tileset():
 
         self.y3 = self.y + ((self.height-1) * (self.tilemap.tile_height+self.tilespace[1]))
     
+        #set if we want to populate the tile when a player walks on it
         self.unexplored = True
     def createsquare(self, tileimgx:int, tileimgy:int):
+        """Create an empty noncollidable square from tiles"""
         self.unexplored = False
         tempy = []
         
@@ -74,6 +76,7 @@ class Tileset():
             tempy = []
     #useful for making a list of collidables
     def aggregate_collidables(self):
+        """Create a list of collidable tiles"""
         self.collidabletiles = []
         for ytiles in self.tilelist:
             for xtile in ytiles:
@@ -81,20 +84,19 @@ class Tileset():
                     self.collidabletiles.append(xtile)
     
     def aggregate_noncollidable(self):
+        """Create a list of noncollidable tiles"""
         self.noncollidabletiles = []
         for ytiles in self.tilelist:
             for xtile in ytiles:
                 if not xtile.collidable: 
                     self.noncollidabletiles.append(xtile)
-    def dbcreate():
-        pass
+
 
     def gen_cave(self):
-        
+        """Generate a cave on the tileset from opensimplex noise"""
         opensimplex.random_seed()
 
-        """xpix = 30
-        ypix = 30"""
+
         scale = 6
         pic = []
 
@@ -104,8 +106,8 @@ class Tileset():
                 noise_val = 1* opensimplex.noise2(i/scale, j/scale)
                 noise_val += 0.5*opensimplex.noise2(i/scale, j/scale)
                 noise_val += 0.25*opensimplex.noise2(i/scale, j/scale)
-                #noise_val = noise_val / (0.5 + 0.25 + 0.125)
-                #noise_val = noise_val ** 0.5
+
+                #make the values 1 or 0 so that we know which ones to make collidable, and which ones not
                 if noise_val < 0.5:
                     noise_val = 0
                 if noise_val > 0.5:
@@ -115,12 +117,9 @@ class Tileset():
             pic.append(row)
         
         
-        #print(pic)
-        
-        
         
         tempy = []
-        
+        #appen the tiles
         for i in range(0, self.height):
             for n in range(0, self.width):
                 #this looks pretty digusting and is not up to standards of PEP 8, but it works #pxwidth
@@ -134,6 +133,7 @@ class Tileset():
             tempy = []
     
     def createsquarefilled(self, tileimgx:int, tileimgy:int):
+        """Create a square that is filled with collidables"""
         self.unexplored = False
         tempy = []
         
@@ -144,7 +144,3 @@ class Tileset():
                 
             self.tilelist.append(tempy)
             tempy = []
-    """def mine(self, pos):
-        if self.tilelist[pos[0]][pos[1]].hp <= 0:
-            self.tilelist[pos[0]][pos[1]].collidable = False
-        self.tilelist[pos[0]][pos[1]].hp -= 1"""
